@@ -58,8 +58,8 @@ services:
       # JWT Secret
       SECRET_KEY: ${SECRET_KEY:-your-super-secret-key-change-in-production}
       
-      # CORS - Configured for production subdomains
-      BACKEND_CORS_ORIGINS: '["https://kariajuda.com","https://www.kariajuda.com","https://admin.kariajuda.com","https://api.kariajuda.com"]'
+      # CORS - Configured for production subdomains and development
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-'["https://kariajuda.com","https://www.kariajuda.com","https://admin.kariajuda.com","https://api.kariajuda.com","http://localhost:3000","http://localhost:3002","http://localhost:8000"]'}
       
       # Environment
       ENVIRONMENT: ${ENVIRONMENT:-production}

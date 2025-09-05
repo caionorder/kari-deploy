@@ -26,25 +26,37 @@ fi
 echo -e "${GREEN}Adding git submodules for repositories...${NC}"
 
 # API Repository
-if [ ! -d api ]; then
+if [ ! -d api/.git ]; then
+    if [ -d api ]; then
+        echo "Removing existing api directory..."
+        rm -rf api
+    fi
     echo "Adding API submodule..."
-    git submodule add git@github.com:caionorder/kari-api.git api
+    git submodule add -f git@github.com:caionorder/kari-api.git api
 else
     echo "API submodule already exists"
 fi
 
 # Site Repository
-if [ ! -d site ]; then
+if [ ! -d site/.git ]; then
+    if [ -d site ]; then
+        echo "Removing existing site directory..."
+        rm -rf site
+    fi
     echo "Adding Site submodule..."
-    git submodule add git@github.com:caionorder/kari-site.git site
+    git submodule add -f git@github.com:caionorder/kari-site.git site
 else
     echo "Site submodule already exists"
 fi
 
 # Admin Repository
-if [ ! -d admin ]; then
+if [ ! -d admin/.git ]; then
+    if [ -d admin ]; then
+        echo "Removing existing admin directory..."
+        rm -rf admin
+    fi
     echo "Adding Admin submodule..."
-    git submodule add git@github.com:caionorder/kari-admin.git admin
+    git submodule add -f git@github.com:caionorder/kari-admin.git admin
 else
     echo "Admin submodule already exists"
 fi
@@ -103,7 +115,7 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY . .
 RUN npm run build
@@ -122,7 +134,7 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY . .
 RUN npm run build

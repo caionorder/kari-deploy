@@ -1,0 +1,9 @@
+[submodule "api"]
+	path = api
+	url = git@github.com:caionorder/kari-api.git
+[submodule "site"]
+	path = site
+	url = git@github.com:caionorder/kari-site.git
+[submodule "admin"]
+	path = admin
+	url = git@github.com:caionorder/kari-admin.git
