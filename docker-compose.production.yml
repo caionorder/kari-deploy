@@ -1,0 +1,83 @@
+version: '3.8'
+
+# Production-specific overrides
+services:
+  postgres:
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD:-}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    restart: always
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  site:
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  admin:
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  traefik:
+    restart: always
+    environment:
+      # Use production Let's Encrypt server
+      TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_CASERVER: https://acme-v02.api.letsencrypt.org/directory
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backup:
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"

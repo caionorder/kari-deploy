@@ -1,0 +1,52 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Add server to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to server
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+      run: |
+        ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+          cd /opt/kariajuda
+          git pull origin main
+          git submodule update --remote --merge
+          docker-compose build --no-cache
+          docker-compose up -d
+          docker-compose exec -T api alembic upgrade head
+          ./scripts/health_check.sh
+        EOF
+
+    - name: Send notification
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: 'Deployment to production ${{ job.status }}'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
