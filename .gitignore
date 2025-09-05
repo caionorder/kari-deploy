@@ -31,7 +31,7 @@ Thumbs.db
 *.swo
 
 # Application repositories (will be git submodules)
-# Remove these lines after adding as submodules
-api/
-site/
-admin/
+# These are managed as git submodules, not ignored
+# api/
+# site/
+# admin/
