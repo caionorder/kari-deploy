@@ -8,7 +8,7 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Configure SSH
       uses: webfactory/ssh-agent@v0.7.0
@@ -37,23 +37,3 @@ jobs:
       run: |
         TIMESTAMP=$(date +"%Y%m%d")
         scp $SERVER_USER@$SERVER_HOST:/opt/kariajuda/backups/kariajuda_backup_${TIMESTAMP}*.sql.gz ./
-
-    - name: Upload backup to S3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl private --follow-symlinks
-      env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-east-1'
-        SOURCE_DIR: './'
-        DEST_DIR: 'backups/'
-
-    - name: Send notification
-      if: failure()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: 'Daily backup failed!'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
