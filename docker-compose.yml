@@ -95,7 +95,7 @@ services:
       context: ./site
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: https://api.kariajuda.com/api/v1
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://api.kariajuda.com}
     container_name: kariajuda-site
     restart: unless-stopped
     depends_on:
@@ -119,7 +119,7 @@ services:
       context: ./admin
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: https://api.kariajuda.com/api/v1
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://api.kariajuda.com/api/v1}
     container_name: kariajuda-admin
     restart: unless-stopped
     depends_on:

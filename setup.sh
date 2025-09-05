@@ -112,6 +112,12 @@ EOF
 cat > site/Dockerfile << 'EOF'
 FROM node:18-alpine AS builder
 
+# Accept build args
+ARG REACT_APP_API_URL
+
+# Set environment variable for build
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -130,6 +136,12 @@ EOF
 # Admin Dockerfile
 cat > admin/Dockerfile << 'EOF'
 FROM node:18-alpine AS builder
+
+# Accept build args
+ARG REACT_APP_API_URL
+
+# Set environment variable for build
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 WORKDIR /app
 
